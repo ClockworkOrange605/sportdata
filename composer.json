@@ -1,0 +1,10 @@
+{
+    "name": "sportdata/api",
+    "description": "Sportdata API",
+    "require": {
+        "illuminate/support": "^8.13",
+        "illuminate/http": "^8.13",
+        "guzzlehttp/guzzle": "^7.2",
+        "symfony/var-dumper": "^5.1"        
+    }
+}
