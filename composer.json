@@ -10,5 +10,10 @@
         "symfony/var-dumper": "^5.1",
         "phpoption/phpoption": "^1.7",
         "vlucas/phpdotenv": "^5.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "SportData\\Models\\": "src/models/"
+        }
     }
 }
