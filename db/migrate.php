@@ -29,7 +29,8 @@
         $table->foreignId('league_id')->constrained('leagues');
         $table->string('name');
         $table->string('team1');
-        $table->string('team2');
+        $table->string('team2')->nullable();
+        $table->string('result')->nullable();
         $table->timestamp('date');
     });
 
@@ -46,6 +47,7 @@
         $table->foreignId('type_id')->constrained('odd_types');
         $table->string('name');
         $table->float('value');
+        $table->boolean('is_winner')->nullable();
     });
 
 ?>
