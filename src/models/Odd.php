@@ -8,6 +8,11 @@
         public $timestamps = false;
         
         protected $guarded = [];
+
+        public function type() 
+        {
+            return $this->belongsTo('SportData\Models\OddType');
+        }
     }
 
 ?>
