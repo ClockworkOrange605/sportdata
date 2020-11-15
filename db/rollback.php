@@ -10,5 +10,4 @@
     Capsule::schema()->dropIfExists('countries');
     Capsule::schema()->dropIfExists('leagues');
     
-
 ?>

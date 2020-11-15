@@ -30,7 +30,7 @@
         $table->string('name');
         $table->string('team1');
         $table->string('team2')->nullable();
-        $table->string('result')->nullable();
+        $table->mediumText('result')->nullable();
         $table->timestamp('date');
     });
 

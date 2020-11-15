@@ -13,11 +13,11 @@
 
     $client = new HttpClient();
 
-    $dateFrom = Carbon::createFromDate(2000, 1, 1)
+    $dateFrom = Carbon::createFromDate(2020, 1, 1)
                     ->startOfDay()
                     ->toIso8601ZuluString();
 
-    $dateUntil = Carbon::now()
+    $dateUntil = Carbon::createFromDate(2022, 1, 1)
                     ->startOfDay()
                     ->toIso8601ZuluString();
 
@@ -33,7 +33,6 @@
             ['external_id' => $sport['Id']],
             ['name' => $sport['N']]
         );
-        dump($sportModel->toJson());
 
         $countryLeagues = $client->post(
             env('BETBOOM_HOST')."/Events/GetResChampsList", [
@@ -51,12 +50,11 @@
             $leagueExternalName = (string) Str::of($countryLeague['V'])->trim('&nbsp;');
 
             if($leagueExternalId) continue;
-
+            
             $countryModel = Country::firstOrCreate(
                 ['external_id' => $countryExternalId],
                 ['name' => $leagueExternalName]
             );
-            dump($countryModel->toJson());
 
             $events = $client->post(
                 env('BETBOOM_HOST')."/Events/GetResults", [
@@ -76,7 +74,6 @@
                     ['external_id' => $eventGroup['Id']],
                     ['name' => $eventGroup['N']]
                 );
-                dump($leagueModel->toJson());
 
                 foreach($eventGroup['E'] as $event) {
                     $date = Carbon::now()->setTimestamp(Str::of($event['D'])->after('/Date(')->before('000+'));
@@ -94,14 +91,12 @@
                             'date' => Carbon::now()->setTimestamp(Str::of($event['D'])->after('/Date(')->before('000+'))->toDateTimeLocalString()
                         ]
                     );
-                    dump($eventModel->toJson());
 
                     foreach($event['Stakes'] as $odd) {
                         $oddTypeModel = OddType::firstOrCreate(
                             ['external_id' => $odd['GId']],
                             ['name' => $odd['GN']]
                         );
-                        dump($oddTypeModel->toJson());
 
                         $oddModel = Odd::firstOrCreate(
                             ['external_id' => $odd['Id']],
@@ -113,12 +108,9 @@
                                 'is_winner' => $odd['IsWinner'],
                             ]
                         );
-                        dump($oddModel->toJson());
                     }
                 }   
             }
-        }
-  
+        }  
     }
-
 ?>

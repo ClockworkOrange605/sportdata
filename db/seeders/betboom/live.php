@@ -26,7 +26,6 @@
             ['external_id' => $sport['Id']],
             ['name' => $sport['N']]
         );
-        dump($sportModel->toJson());
 
         $countres = $client->post(
             env('BETBOOM_HOST')."/Common/GetCountryList", [
@@ -42,7 +41,6 @@
                 ['external_id' => $country['Id']],
                 ['name' => $country['N']]
             );
-            dump($countryModel->toJson());
 
             $leagues = $client->post(
                 env('BETBOOM_HOST')."/Common/GetChampsList", [
@@ -58,7 +56,6 @@
                     ['external_id' => $league['Id']],
                     ['name' => $league['N']]
                 );
-                dump($leagueModel->toJson());
 
                 $events = $client->post(
                     env('BETBOOM_HOST')."/Events/GetEventsList", [
@@ -82,14 +79,12 @@
                             'date' => Carbon::now()->setTimestamp(Str::of($event['D'])->after('/Date(')->before('000+'))->toDateTimeLocalString()
                         ]
                     );
-                    dump($eventModel->toJson());
 
                     foreach($event['StakeTypes'] as $oddType) {
                         $oddTypeModel = OddType::firstOrCreate(
                             ['external_id' => $oddType['Id']],
                             ['name' => $oddType['N']]
                         );
-                        dump($eventModel->toJson());
                         
                         foreach($oddType['Stakes'] as $odd) {
                             $oddModel = Odd::firstOrCreate(
@@ -102,10 +97,10 @@
                                     'is_winner' => $odd['IsWinner'],
                                 ]
                             );
-                            dump($oddModel->toJson());
                         }
                     }
                 }
             }
         }
     }
+?>
