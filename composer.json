@@ -16,5 +16,17 @@
         "psr-4": {
             "SportData\\Models\\": "src/models/"
         }
+    },
+    "scripts": {
+        "init": [
+            "@php -r \"file_exists('.env') || copy('.env.source', '.env');\""
+        ],
+        "db:migrate": [
+            "@php db/migrate.php"
+        ],
+        "db:seed": [
+            "@php db/seeders/betboom/live.php",
+            "@php db/seeders/betboom/history.php"
+        ]
     }
 }
