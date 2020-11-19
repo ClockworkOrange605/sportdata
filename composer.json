@@ -22,12 +22,19 @@
         "app:init": [
             "@php -r \"file_exists('.env') || copy('.env.source', '.env');\""
         ],
-        "db:migrate": [
-            "@php db/migrate.php"
-        ],
+        "db:migrate": [ "@php db/migrate.php" ],
+        "db:rollback": [ "@php db/rollback.php" ],
         "db:seed": [
             "@php db/seeders/betboom/live.php",
             "@php db/seeders/betboom/history.php"
-        ]
+        ],
+        "export:events": [ "@php public/export.php > storage/events.csv" ]
+    },
+    "scripts-descriptions": {
+        "app:init": "Application Initialization",
+        "db:migrate": "Rollout Database Migrations",
+        "db:rollback": "Rollback Database migrations",
+        "db:seed": "Fill Database with Data",
+        "export:events": "Export Events"
     }
 }

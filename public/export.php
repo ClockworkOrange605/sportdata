@@ -28,7 +28,7 @@
     $response = new Response((string) $csv, 200, [
         'Content-Type' => 'text/csv',
         'Content-Transfer-Encoding' => 'binary',
-        'Content-Disposition' => 'attachment; filename="people.csv"',
+        'Content-Disposition' => 'attachment; filename="events.csv"',
     ]);
 
     $response->send();
