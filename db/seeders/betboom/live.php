@@ -54,7 +54,10 @@
             foreach($leagues as $league) {
                 $leagueModel = League::firstOrCreate(
                     ['external_id' => $league['Id']],
-                    ['name' => $league['N']]
+                    [
+                        'country_id' => $countryModel->id,
+                        'name' => $league['N']
+                    ]
                 );
 
                 $events = $client->post(
@@ -74,9 +77,11 @@
                             'country_id' => $countryModel->id,
                             'league_id' => $leagueModel->id,
                             'name' => $event['N'],
-                            'team1' => $event['HT'],
-                            'team2' => $event['AT'],
-                            'date' => Carbon::now()->setTimestamp(Str::of($event['D'])->after('/Date(')->before('000+'))->toDateTimeLocalString()
+                            'date' => Carbon::now()->setTimestamp(
+                                    Str::of($event['D'])->after('/Date(')->before('000+')
+                                )->toDateTimeLocalString(),
+                            'home_team' => $event['HT'],
+                            'away_team' => $event['AT']
                         ]
                     );
 

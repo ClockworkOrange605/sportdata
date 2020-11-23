@@ -8,7 +8,8 @@
     $csv = Csv::createFromFileObject(new \SplTempFileObject);
     $events = Capsule::select("select e.id,
             s.name as sport, c.name as country, l.name as leaugue,
-            e.name, e.team1, e.team2, e.date,
+            e.name, e.home_team, e.away_team, e.date,
+            e.score, e.home_score, e.away_score,
             o1.is_winner as 'is_w1', o1.value as 'w1', 
             o2.is_winner as 'is_w2', o2.value as 'w2', 
             ox.is_winner as 'is_wx', ox.value as 'wx'            

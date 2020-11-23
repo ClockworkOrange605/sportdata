@@ -18,6 +18,7 @@
     Capsule::schema()->create('leagues', function ($table) {
         $table->id();
         $table->unsignedBigInteger('external_id')->unique();
+        $table->foreignId('country_id')->constrained('countries');
         $table->string('name');
     });
 
@@ -28,9 +29,11 @@
         $table->foreignId('country_id')->constrained('countries');
         $table->foreignId('league_id')->constrained('leagues');
         $table->string('name');
-        $table->string('team1');
-        $table->string('team2')->nullable();
-        $table->mediumText('result')->nullable();
+        $table->string('score')->nullable();
+        $table->string('home_team');
+        $table->string('away_team')->nullable();
+        $table->integer('home_score')->nullable();
+        $table->integer('away_score')->nullable();
         $table->timestamp('date');
     });
 

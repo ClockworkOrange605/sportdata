@@ -72,12 +72,13 @@
             foreach($events as $eventGroup) {
                 $leagueModel = League::firstOrCreate(
                     ['external_id' => $eventGroup['Id']],
-                    ['name' => $eventGroup['N']]
+                    [
+                        'country_id' => $countryModel->id,
+                        'name' => $eventGroup['N']                 
+                    ]
                 );
 
                 foreach($eventGroup['E'] as $event) {
-                    $date = Carbon::now()->setTimestamp(Str::of($event['D'])->after('/Date(')->before('000+'));
-                    
                     $eventModel = Event::firstOrCreate(
                         ['external_id' => $event['Id']],
                         [
@@ -85,10 +86,16 @@
                             'country_id' => $countryModel->id,
                             'league_id' => $leagueModel->id,
                             'name' => $event['N'],
-                            'team1' => $event['HT'],
-                            'team2' => $event['AT'],
-                            'result' => $event['S'],
-                            'date' => Carbon::now()->setTimestamp(Str::of($event['D'])->after('/Date(')->before('000+'))->toDateTimeLocalString()
+                            'score' => (string) Str::of($event['S'])->before(' '),
+                            'date' => Carbon::now()->setTimestamp(
+                                        Str::of($event['D'])->after('/Date(')->before('000+')
+                                    )->toDateTimeLocalString(),
+                            'home_team' => (string) Str::of($event['N'])->before(' - '),
+                            'away_team' => (string) Str::of($event['N'])->after(' - '),
+                            'home_score' => (int)(string) Str::of($event['S'])
+                                                ->before(' ')->before(':'),
+                            'away_score' => (int)(string) Str::of($event['S'])
+                                                ->before(' ')->after(':')
                         ]
                     );
 
