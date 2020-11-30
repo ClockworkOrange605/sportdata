@@ -15,6 +15,7 @@
     },
     "autoload": {
         "psr-4": {
+            "SportData\\Clients\\": "src/clients/",
             "SportData\\Models\\": "src/models/"
         }
     },
