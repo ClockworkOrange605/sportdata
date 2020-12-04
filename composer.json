@@ -8,10 +8,12 @@
         "illuminate/http": "^8.14",
         "illuminate/events": "^8.14",
         "guzzlehttp/guzzle": "^7.2",
-        "symfony/var-dumper": "^5.1",
+        "league/csv": "^9.6",
         "phpoption/phpoption": "^1.7",
-        "vlucas/phpdotenv": "^5.2",
-        "league/csv": "^9.6"
+        "vlucas/phpdotenv": "^5.2"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^5.1"
     },
     "autoload": {
         "psr-4": {
@@ -23,19 +25,25 @@
         "app:init": [
             "@php -r \"file_exists('.env') || copy('.env.source', '.env');\""
         ],
-        "db:migrate": [ "@php db/migrate.php" ],
         "db:rollback": [ "@php db/rollback.php" ],
-        "db:seed": [
-            "@php db/seeders/betboom/live.php",
-            "@php db/seeders/betboom/history.php"
+        "db:migrate": [ "@php db/migrate.php" ],        
+        "db:seed": [ "@php db/seed.php" ],
+        "db:refresh": [ 
+            "@php db/rollback.php",
+            "@php db/migrate.php",
+            "@php db/seed.php" 
         ],
-        "export:events": [ "@php public/export.php > storage/events.csv" ]
+        "export:events": [ "@php public/export.php > storage/events.csv" ],
+        "test": []
     },
     "scripts-descriptions": {
         "app:init": "Application Initialization",
+
         "db:migrate": "Rollout Database Migrations",
         "db:rollback": "Rollback Database migrations",
-        "db:seed": "Fill Database with Data",
+        "db:seed": "Preseed Database",
+        "db:refresh": "Completly Rollback and Rollout Database with Seeders",
+
         "export:events": "Export Events"
     }
 }
