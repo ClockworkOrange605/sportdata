@@ -3,9 +3,8 @@
 
     use Illuminate\Database\Capsule\Manager as Capsule;
     
-    /* sources.php */
-    Capsule::schema()->dropIfExists('sources_pivots');
-    Capsule::schema()->dropIfExists('sources');
+    /* betting.php */
+    Capsule::schema()->dropIfExists('signals');
 
     /* events.php */
     // Capsule::schema()->dropIfExists('odds');
@@ -17,3 +16,7 @@
     Capsule::schema()->dropIfExists('leagues');
     Capsule::schema()->dropIfExists('countries');
     Capsule::schema()->dropIfExists('sports');
+
+    /* sources.php */
+    Capsule::schema()->dropIfExists('sources_pivots');
+    Capsule::schema()->dropIfExists('sources');
