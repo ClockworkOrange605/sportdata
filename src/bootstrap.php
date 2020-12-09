@@ -1,4 +1,6 @@
 <?php
+    define('SPORTDATA_START', microtime(true));
+
     require __DIR__ . '/../vendor/autoload.php';
 
     use Illuminate\Events\Dispatcher;
