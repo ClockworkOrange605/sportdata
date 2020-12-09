@@ -110,9 +110,7 @@
                 'champId' => $leagueId
             ]);
 
-            $events = self::mapEvents($response->json());
-
-            return $events;
+            return self::mapEvents($response->json());
         }
 
         public function getPrematchEvent(int $eventId) : array
@@ -121,9 +119,7 @@
                 'eventId' => $eventId
             ]);
 
-            $events = self::mapEvents($response->json());
-
-            return $events;
+            return self::mapEvents($response->json());
         }
 
         public function getLiveEvents(int $sportId) : array
@@ -132,9 +128,7 @@
                 'sportId' => $sportId
             ]);
 
-            $events = self::mapEvents($response->json());
-
-            return $events;
+            return self::mapEvents($response->json());
         }
 
         public function getLiveEvent(int $eventId) : array
@@ -143,9 +137,7 @@
                 'eventNumber' => $eventId
             ]);
 
-            $events = self::mapEvents($response->json());
-
-            return $event;
+            return self::mapEvents($response->json());;
         }
 
         private static function mapEvents(array $array) : array
@@ -155,7 +147,7 @@
                     'name' => $event['N'],
                     'event_date' => $event['D'],
                     'current_time' => $event['PT'],
-                    'period' => $event['S'],
+                    'period' => trim($event['S']),
                     'scores' => $event['SS'],
                     'home_score' => $event['HS'],
                     'away_score' => $event['AS'],
@@ -169,7 +161,7 @@
                     'country' => [
                         'name' => $event['CtN'],
                         'source' => [
-                            'source_id' => $event['CId'],
+                            // 'source_id' => $event['??'],
                             'source_type'=> self::class
                         ]
                     ],
@@ -186,7 +178,7 @@
                     'away_team' => [
                         'name' => $event['AT'],
                     ],
-                    'odds' => self::mapOdds($event['StakeTypes']),
+                    'odds' => collect(self::mapOdds($event['StakeTypes'])),
                     'source' => [
                         'source_id' => $event['Id'],
                         'source_type' => self::class
