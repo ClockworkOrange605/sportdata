@@ -57,45 +57,45 @@
     });
 
     /** Events **/
-    $source->leagues->each(function($league) use($client, $source) {        
-        foreach ($client->getEvents(
-            $league->country->sport->sources->find($source->id)->pivot->external_id,
-            $league->country->sources->find($source->id)->pivot->external_id,
-            $league->sources->find($source->id)->pivot->external_id
-        ) as $result) {
-            foreach($result['events'] as $event) {
-                $addedHomeTeam = Team::firstOrCreate([
-                    'league_id' => $league->id,
-                    'name' => $event['home_team']['name']
-                ]);
+    // $source->leagues->each(function($league) use($client, $source) {        
+    //     foreach ($client->getEvents(
+    //         $league->country->sport->sources->find($source->id)->pivot->external_id,
+    //         $league->country->sources->find($source->id)->pivot->external_id,
+    //         $league->sources->find($source->id)->pivot->external_id
+    //     ) as $result) {
+    //         foreach($result['events'] as $event) {
+    //             $addedHomeTeam = Team::firstOrCreate([
+    //                 'league_id' => $league->id,
+    //                 'name' => $event['home_team']['name']
+    //             ]);
 
-                $addedAwayTeam = Team::firstOrCreate([
-                    'league_id' => $league->id,
-                    'name' => $event['away_team']['name']
-                ]);
+    //             $addedAwayTeam = Team::firstOrCreate([
+    //                 'league_id' => $league->id,
+    //                 'name' => $event['away_team']['name']
+    //             ]);
 
-                $addedEvent = Event::firstOrCreate(
-                    array_merge(
-                        [ 'league_id' => $league->id ],
-                        Arr::only($event, ['name', 'start_at' ])
-                    ),
-                    array_merge(
-                        [
-                            'home_team_id' => $addedHomeTeam->id, 
-                            'away_team_id' => $addedAwayTeam->id,
-                        ],
-                        Arr::only($event, [
-                            'status', 'home_score', 'away_score'
-                        ])
-                    )
-                );
+    //             $addedEvent = Event::firstOrCreate(
+    //                 array_merge(
+    //                     [ 'league_id' => $league->id ],
+    //                     Arr::only($event, ['name', 'start_at' ])
+    //                 ),
+    //                 array_merge(
+    //                     [
+    //                         'home_team_id' => $addedHomeTeam->id, 
+    //                         'away_team_id' => $addedAwayTeam->id,
+    //                     ],
+    //                     Arr::only($event, [
+    //                         'status', 'home_score', 'away_score'
+    //                     ])
+    //                 )
+    //             );
 
-                // $source->teams()->syncWithoutDetaching($addedHomeTeam);
-                // $source->teams()->syncWithoutDetaching($addedAwayTeam);
+    //             // $source->teams()->syncWithoutDetaching($addedHomeTeam);
+    //             // $source->teams()->syncWithoutDetaching($addedAwayTeam);
                 
-                $source->events()->syncWithoutDetaching([
-                    $addedEvent->id => ['external_id' => $event['source']['source_id']]
-                ]);
-            }            
-        }
-    });
+    //             $source->events()->syncWithoutDetaching([
+    //                 $addedEvent->id => ['external_id' => $event['source']['source_id']]
+    //             ]);
+    //         }            
+    //     }
+    // });
