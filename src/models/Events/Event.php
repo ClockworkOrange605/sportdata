@@ -32,11 +32,17 @@
             )->withPivot('external_id');
         }
 
+        public function getExternalId(int $sourceId) {
+            return $this->sources()
+                        ->where('source_id', $sourceId)
+                        ->first()->pivot->external_id;
+        }
+
         public static function findBySourceId(int $sourceExternalId, int $sourceId)
         {
             return self::whereHas('sources', function($query) use($sourceExternalId, $sourceId) {
                 $query->where('sources_pivots.source_id', $sourceId)
-                    ->where('sources_pivots.external_id', $sourceExternalId);
+                     ->where('sources_pivots.external_id', $sourceExternalId);
             })->first();
         }
     }

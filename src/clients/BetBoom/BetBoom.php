@@ -166,6 +166,7 @@
                     'name' => $event['N'],
                     'status' => $event['S'],
                     'status' => Str::of($event['S']) != 'Canceled' ? 'finished' : 'canceled',
+                    'date' => self::prepareDate($event['D']),
                     'start_at' => (string) Carbon::now()->setTimestamp(
                         Str::of($event['D'])->after('/Date(')->before(')/')->before('000+')),
                     'scores' => (string) Str::of($event['S'])->before('<br />'),
@@ -196,6 +197,7 @@
                 return (object) [
                     'name' => $event['N'],
                     'date' => $event['D'],
+                    'date' => self::prepareDate($event['D']),
                     'period_name' => trim($event['S']),
                     'period_time' => $event['PT'],
                     'scores' => $event['SS'],
@@ -289,5 +291,10 @@
                     ],
                 ];
             }, $array);
-        }        
+        }
+
+        private static function prepareDate(string $date) : string
+        {
+            return (string) Carbon::createFromFormat('Y-m-d\TH:s:i\Z', $date);
+        }
     }
