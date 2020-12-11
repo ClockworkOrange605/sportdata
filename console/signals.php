@@ -26,7 +26,7 @@
 
             if(!empty($added_event) && !$event->odds->isEmpty()) {
                 $added_signal = Signal::create([
-                    'sport_id' => $added_event->sport->id,
+                    'sport_id' => 1,//$added_event->sport->id,
                     'event_id' => $added_event->id,
                     'flag' => 'test',
                     'code' => 'football_next_goal_80',
