@@ -89,11 +89,9 @@
                 's' => $sportId,
                 'l' => $countryId,
                 'g' => $leagueId,
-                // 'sdtSting' => $dateFrom,
-                // 'edtSting' => $dateUntil,
-                'sdtSting' => "2018-01-01T00:00:00.000Z",
-                'edtSting' => "2020-12-31T23:59:59.999Z",
-                'evF' => trim($query),
+                'sdtSting' => !empty($dateFrom) ? $dateFrom : "2018-01-01T00:00:00.000Z",
+                'edtSting' => !empty($dateUntil) ? $dateUntil : "2020-12-31T23:59:59.999Z",
+                'evF' => $query,
             ]);
 
             $events = array_map(function($league) {
@@ -180,6 +178,20 @@
                         'away_score' => (int) (string) Str::of($event['S'])
                             ->before('<br />')->before(' ')->after(':'),
                     ],
+
+                    'teams' => (object) [
+                        'home' => (object) [
+                            'name' => (string) Str::of($event['N'])->before('-')->trim(),
+                            'score' => (int) (string) Str::of($event['S'])
+                                ->before('<br />')->before(' ')->before(':'),
+                        ],
+                        'away' => (object) [
+                            'name' => (string) Str::of($event['N'])->after('-')->trim(),
+                            'score' => (int) (string) Str::of($event['S'])
+                                ->before('<br />')->before(' ')->after(':'),
+                        ],
+                    ],
+
                     'odds' => collect(
                         self::mapOddValues($event['Stakes'])
                     ),
