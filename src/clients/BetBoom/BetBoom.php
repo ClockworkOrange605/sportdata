@@ -39,42 +39,53 @@
             return collect($sports);
         }
 
-        public function getCountries(int $sportId) : \Illuminate\Support\Collection
+        public function getCountriesWithLeagues(
+            int $sportId, 
+            string $dateFrom = '', 
+            string $dateUntil = '' ) : \Illuminate\Support\Collection
         {
-            $response = $this->client->post('Common/GetCountryList', [
-                'sportId' => $sportId,
+            $response = $this->client->post('Events/GetResChampsList', [
+                "sp" => $sportId,
+                'st' => !empty($dateFrom) ? $dateFrom : "2018-01-01T00:00:00.000Z",
+                'en' => !empty($dateUntil) ? $dateUntil : "2020-12-31T23:59:59.999Z",
             ]);
 
-            $countries = array_map(function($country) { 
-                return (object) [
-                    'name' => $country['N'],
+            $list = collect(
+                array_map(function($item) {
+                    return (object) [
+                        'country_id' => (int) (string) Str::of($item['K'])->after('l')->before('_g'),
+                        'league_id' => (int) (string) Str::of($item['K'])->after('_g'),
+                        'name' => trim(str_replace('&nbsp;', ' ', $item['V'])),
+                    ];
+                }, $response->json())
+            );
+
+            $countries = $list->where('league_id', 0);
+            $leagues = $list->where('league_id', '!=', 0)->groupBy('country_id');
+            
+            $result = [];
+            $countries->each(function($item) use($countries, $leagues, &$result) {
+                array_push($result, (object) [
+                    'name' => $item->name,
                     'source' => (object) [
-                        'id' => $country['Id'],
-                        'class' => self::class
-                    ]
-                ];
-            }, $response->json());
+                        'id' => $item->country_id,
+                        'type' => self::class,
+                    ],
+                    'leagues' => collect(
+                        array_map(function($league) {
+                            return (object) [
+                                'name' => $league->name,
+                                'source' => (object) [
+                                    'id' => $league->league_id,
+                                    'type' => self::class,
+                                ]
+                            ];
+                        }, $leagues->get($item->country_id)->toArray())
+                    ),
+                ]);
+            });
 
-            return collect($countries);
-        }
-
-        public function getLeagues(int $countryId) : \Illuminate\Support\Collection
-        {
-            $response = $this->client->post('Common/GetChampsList', [
-                'countryId' => $countryId,
-            ]);
-
-            $leagues = array_map(function($league) {
-                return (object) [
-                    'name' => $league['N'],
-                    'source' => (object) [
-                        'id' => $league['Id'],
-                        'class' => self::class
-                    ]
-                ];
-            }, $response->json());
-
-            return collect($leagues);
+            return collect($result);
         }
 
         public function getEvents(
@@ -110,6 +121,61 @@
             }, $response->json());
 
             return collect($events);
+        }
+
+        public function getSportsWithPrematchEvents() : \Illuminate\Support\Collection
+        {
+            $response = $this->client->post('Events/GetSportsWithCount');
+
+            $countries = array_map(function($country) { 
+                return (object) [
+                    'name' => $country['N'],
+                    'source' => (object) [
+                        'id' => $country['Id'],
+                        'class' => self::class
+                    ]
+                ];
+            }, $response->json());
+
+            return collect($countries);
+        }
+
+        public function getCountriesWithPrematchEvents(int $sportId) : \Illuminate\Support\Collection
+        {
+            $response = $this->client->post('Common/GetCountryList', [
+                'sportId' => $sportId,
+            ]);
+
+            $countries = array_map(function($country) { 
+                return (object) [
+                    'name' => $country['N'],
+                    'source' => (object) [
+                        'id' => $country['Id'],
+                        'class' => self::class
+                    ]
+                ];
+            }, $response->json());
+
+            return collect($countries);
+        }
+
+        public function getLeaguesWithPrematchEvents(int $countryId) : \Illuminate\Support\Collection
+        {
+            $response = $this->client->post('Common/GetChampsList', [
+                'countryId' => $countryId,
+            ]);
+
+            $leagues = array_map(function($league) {
+                return (object) [
+                    'name' => $league['N'],
+                    'source' => (object) [
+                        'id' => $league['Id'],
+                        'class' => self::class
+                    ]
+                ];
+            }, $response->json());
+
+            return collect($leagues);
         }
         
         public function getPrematchEvents(int $leagueId) : \Illuminate\Support\Collection
@@ -164,21 +230,9 @@
                     'name' => $event['N'],
                     'status' => $event['S'],
                     'status' => Str::of($event['S']) != 'Canceled' ? 'finished' : 'canceled',
-                    'date' => self::prepareDate($event['D']),
-                    'start_at' => (string) Carbon::now()->setTimestamp(
-                        Str::of($event['D'])->after('/Date(')->before(')/')->before('000+')),
-                    'scores' => (string) Str::of($event['S'])->before('<br />'),
-                    'home_team' => (object) [
-                        'name' => (string) Str::of($event['N'])->before('-')->trim(),
-                        'score' => (int) (string) Str::of($event['S'])
-                            ->before('<br />')->before(' ')->before(':'),
-                    ],
-                    'away_team' => (object) [
-                        'name' => (string) Str::of($event['N'])->after('-')->trim(),
-                        'away_score' => (int) (string) Str::of($event['S'])
-                            ->before('<br />')->before(' ')->after(':'),
-                    ],
 
+                    'date' => self::prepareDate($event['D']),
+                    'scores' => (string) Str::of($event['S'])->before('<br />'),
                     'teams' => (object) [
                         'home' => (object) [
                             'name' => (string) Str::of($event['N'])->before('-')->trim(),
@@ -191,7 +245,6 @@
                                 ->before('<br />')->before(' ')->after(':'),
                         ],
                     ],
-
                     'odds' => collect(
                         self::mapOddValues($event['Stakes'])
                     ),

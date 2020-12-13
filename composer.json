@@ -27,8 +27,12 @@
         ],
         "db:rollback": [ "@php db/rollback.php" ],
         "db:migrate": [ "@php db/migrate.php" ],        
-        "db:seed": [ "@php db/seed.php" ],
+        "db:seed": [ 
+            "Composer\\Config::disableProcessTimeout",
+            "@php db/seed.php" 
+        ],
         "db:refresh": [ 
+            "Composer\\Config::disableProcessTimeout",
             "@php db/rollback.php",
             "@php db/migrate.php",
             "@php db/seed.php" 
