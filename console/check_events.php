@@ -8,12 +8,15 @@
     $client = new BetBoom;
     $source = Source::where('name', 'Betboom')->first();
 
+    dump((string) Carbon::now()->subHours(2));
+
     $source->events()
-        ->where('status', '!=', 'finished')
+        ->where('status', 'not_started')
         ->where('start_at', '<', (string) Carbon::now()->subHours(2))
         ->latest('start_at')
         ->get()
         ->each(function($event) use($client) {
+            // dump($event);
             $response = $client->getEvents(
                 $event->league->country->sport->sources->first()->pivot->external_id,
                 $event->league->country->sources->first()->pivot->external_id,

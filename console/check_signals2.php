@@ -6,14 +6,15 @@
 
     $stake = 50; $profit = 0;
     $signals = Signal::with('event')
-        ->where('code', 'football_next_goal_80')
+        ->where('code', 'football_next_goal_odd_9')
         ->where('odd_type', 'Next Goal')
-        ->where('odd_value', '>', 1.7)
-        
-        // ->where('odd_value', '<', 2.4)
-        // ->where('odd_term', '>', 9)
 
-        // ->where('created_at', '>', '2020-12-14')
+        ->where('odd_value', '>', 9)        
+        ->where('odd_value', '<', 20)
+        // ->where('odd_term', '>', 1)
+        ->where('odd_term', '<', 2)
+
+        ->where('created_at', '>', '2020-12-14')
         // ->where('created_at', '<', '2020-12-15')
 
         // ->where('created_at', '>', '2020-12-15')
@@ -34,8 +35,8 @@
         // ->where('created_at', '>', '2020-12-20')
         // ->where('created_at', '<', '2020-12-21')
 
-        ->where('created_at', '<', (string) Carbon::now()->startOfDay())
-        ->where('created_at', '>', (string) Carbon::yesterday()->startOfDay())
+        // ->where('created_at', '<', (string) Carbon::now()->startOfDay())
+        // ->where('created_at', '>', (string) Carbon::yesterday()->startOfDay())
 
         // ->where('created_at', '>', (string) Carbon::now()->startOfDay())
         ->get()->unique('event_id');

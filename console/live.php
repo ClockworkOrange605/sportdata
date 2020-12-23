@@ -8,7 +8,7 @@
     $source_name = 'BetBoom';
     $sport_id = 1;
     $odd_types = [1];
-    $period_name = 'Finished';
+    $period_name = 'Finished'; //Interrupted
 
     $client = new BetBoom;
     $source = Source::where('name', $source_name)->first();

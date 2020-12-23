@@ -20,30 +20,32 @@
     $events->each('dump_event');
 
     $events
-        ->where('period_time', '=', 80)
+        // ->where('period_time', '=', 80)
+        ->where('odds.0.values.2.value', '>', 9)
         ->each(function($event) use($source) {
             $added_event = Event::findBySourceId($event->source->id, $source->id);
 
             if(!empty($added_event) && !$event->odds->isEmpty()) {
-                dump(
-                    [
-                        'sport_id' => 1,//$added_event->sport->id,
-                        'event_id' => $added_event->id,
-                        'flag' => 'test',
-                        'code' => 'football_next_goal_80',
-                        'odd_external_id' => $event->odds->first()->values->get(2)->source->id,
-                        'odd_type' => $event->odds->first()->name,
-                        'odd_term' => $event->odds->first()->values->get(2)->term,
-                        'odd_value' => $event->odds->first()->values->get(2)->value,
-                    ], 
-                    $event->odds->first(),
-                );
+                // dump(
+                //     [
+                //         'sport_id' => 1,//$added_event->sport->id,
+                //         'event_id' => $added_event->id,
+                //         'flag' => 'test',
+                //         'code' => 'football_next_goal_80',
+                //         'odd_external_id' => $event->odds->first()->values->get(2)->source->id,
+                //         'odd_type' => $event->odds->first()->name,
+                //         'odd_term' => $event->odds->first()->values->get(2)->term,
+                //         'odd_value' => $event->odds->first()->values->get(2)->value,
+                //     ], 
+                //     $event->odds->first(),
+                //     $added_event->toArray(),
+                // );
 
                 $added_signal = Signal::create([
                     'sport_id' => 1,//$added_event->sport->id,
                     'event_id' => $added_event->id,
                     'flag' => 'test',
-                    'code' => 'football_next_goal_80',
+                    'code' => 'football_next_goal_odd_9',
                     'odd_external_id' => $event->odds->first()->values->get(2)->source->id,
                     'odd_type' => $event->odds->first()->name,
                     'odd_term' => $event->odds->first()->values->get(2)->term,
