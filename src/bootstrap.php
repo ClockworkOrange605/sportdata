@@ -1,5 +1,6 @@
 <?php
     define('SPORTDATA_START', microtime(true));
+    define('SPORTDATA_STORAGE_PATH', __DIR__ . '/../storage');
 
     require __DIR__ . '/../vendor/autoload.php';
 

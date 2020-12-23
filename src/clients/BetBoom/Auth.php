@@ -3,32 +3,20 @@
 
     use Illuminate\Http\Client\PendingRequest as HttpClient;
     use GuzzleHttp\Cookie\FileCookieJar;
+    use Illuminate\Support\Str;
 
     class Auth
     {
         private $client;
-        private $cookies;
 
         public function __construct()
         {
             $this->client = new HttpClient;
-            // $this->client->baseUrl(env('BETBOOM_HOST'));
-
-            $this->cookies = new FileCookieJar(__DIR__ .  '/../../../storage/cookie.json', true);
             $this->client->withOptions([
-                'cookies' =>$this->cookies,
+                'cookies' => new FileCookieJar(
+                    SPORTDATA_STORAGE_PATH . '/app/betboom/cookies.json', 
+                true),
             ]);
-        }
-
-        public function index() 
-        {
-            $response = $this->client->get('https://betboom.ru/sport');
-
-            // dump(
-            //     $response->cookies(),
-            // );
-
-            return $response->body();
         }
 
         public function authorize() 
@@ -38,65 +26,35 @@
                 'password' => env('BETBOOM_PASSWORD'),
             ]);
 
-            // dump(
-            //     $response->cookies(),
-            // );
+            self::__construct();
 
             return $response->json('status') == 'success' ? true : false;
         }
 
-        public function home($token) 
+        public function index() 
         {
-            
-            $response = $this->client->get(
-                "https://sport.betboom.ru/SportsBook/Home?token={$token}&sportsBookView=&l=ru&d=d&tz=&of=0&customCssUrl=");
+            $response = $this->client->get('https://betboom.ru/sport');
 
-                    // dump(
-                    //     $response->cookies(),
-                    // );
+            return $response->body();
+        }        
+
+        public function home(string $token = '-') 
+        {   
+            $response = $this->client->get(
+                "https://sport.betboom.ru/SportsBook/Home?token={$token}&sportsBookView=&l=ru&d=d&tz=&of=0&customCssUrl="
+            );
             
             return $response->body();
         }
 
-        public function getCoupon() {
-            $response = $this->client->post('https://sport.betboom.ru/Betting/GetCoupon');
-
-            // dump(
-                // $response->cookies(),
-            //     $response->body(),
-            //     $response->json(),
-            // );
-
-            return (object) $response->json();
-        }
-
-        public function getOrders(string $fromDate, string $untilDate)
+        public static function parseToken(string $page)
         {
-            $response = $this->client->post('https://sport.betboom.ru/Account/GetUserOrders', [
-                    "startDate" => $fromDate,
-                    "endDate" => $untilDate,
-
-                    "statusFilter" => 1,
-                    "timeFilter" => 1,
-                    "isDate" => true,
-                    
-                    "IsBetshopCash" => false,
-                    "checkNumber" => "",
-                    "disableCache" => false
-                ]);
-
-            return collect($response->json());
+            return (string) Str::of($page)
+                ->after("server: 'https://sport.betboom.ru/',")
+                ->before("login: 'sport.showRegisterNotComplete'")
+                ->trim()
+                ->after("token: '")
+                ->before("',");
         }
-
-        public function setMagic()
-        {
-            $response = $this->client->post('https://sport.betboom.ru/Events/SetP0Tf', [
-                'timeFilter' => 0
-            ]);
-
-            dump($response->body());
-
-            return $response->json();
-        }
-
+        
     }
