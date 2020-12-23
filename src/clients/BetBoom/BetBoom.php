@@ -354,6 +354,7 @@
                         'id' => $odd_value['Id'],
                         'class' => self::class
                     ],
+                    'original' => (object) $odd_value
                 ];
             }, $array);
         }
