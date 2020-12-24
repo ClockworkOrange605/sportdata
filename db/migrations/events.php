@@ -10,7 +10,7 @@
         $table->string('status');
         $table->integer('home_score')->nullable();
         $table->integer('away_score')->nullable();
-        $table->timestamp('start_at');
+        $table->dateTime('start_at');
 
         $table->unique(['league_id', 'name', 'start_at']);
     });
