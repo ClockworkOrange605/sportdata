@@ -23,7 +23,7 @@
         // ->where('period_time', '=', 80)
         ->where('odds.0.values.2.value', '>', 9)
         ->each(function($event) use($source) {
-            $added_event = Event::findBySourceId($event->source->id, $source->id);
+            $added_event = Event::findBySourceId($source->id, $event->source->id);
 
             if(!empty($added_event) && !$event->odds->isEmpty()) {
                 // dump(

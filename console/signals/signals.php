@@ -70,7 +70,7 @@
         });
 
     function prepareSignals2($event, $source, $code) {
-        $added_event = Event::findBySourceId($event->source->id, $source->id);
+        $added_event = Event::findBySourceId($source->id, $event->source->id);
             
         if(!empty($added_event) && !$event->odds->isEmpty()) {
             dump_event($event);
@@ -106,111 +106,17 @@
         });
     }
 
-    $events
-        ->where('period_time', '=', 10)
-        ->each(function($event) use($source) {
-            prepareSignals0($event, $source, 'football_next_goal_home_team_10');
-        });
-
-    $events
-        ->where('period_time', '=', 50)
-        ->each(function($event) use($source) {
-            prepareSignals0($event, $source, 'football_next_goal_home_team_50');
-        });
-
-    $events
-        ->where('period_time', '=', 60)
-        ->each(function($event) use($source) {
-            prepareSignals0($event, $source, 'football_next_goal_home_team_60');
-        });
-
-    $events
-        ->where('period_time', '=', 80)
-        ->each(function($event) use($source) {
-            prepareSignals0($event, $source, 'football_next_goal_home_team_80');
-        });
-
-    function prepareSignals0($event, $source, $code) {
-        $added_event = Event::findBySourceId($event->source->id, $source->id);
-            
-        if(!empty($added_event) && !$event->odds->isEmpty()) {
-            dump_event($event);
-
-            dump_signal(
-                $added_event, 
-                $event->odds->first(), 
-                $event->odds->first()->values->get(0),
-                $code
-            );
-
-            create_signal(
-                $added_event,
-                $event->odds->first(), 
-                $event->odds->first()->values->get(0),
-                $code
-            );
-        }            
-    }
-
     function create_signal($added_event, $odd, $odd_value, $code) {
-        // if(!empty($added_event) && !$event->odds->isEmpty()) {
-            $added_signal = Signal::create([
-                'sport_id' => 1,//$added_event->sport->id,
-                'event_id' => $added_event->id,
-                'flag' => 'test',
-                'code' => $code,
-                'odd_external_id' => $odd_value->source->id,
-                'odd_type' => $odd->name,
-                'odd_term' => $odd_value->term,
-                'odd_value' => $odd_value->value,
-            ]);
-        // }
-    }
-
-    $events
-        ->where('period_time', '=', 10)
-        ->each(function($event) use($source) {
-            prepareSignals1($event, $source, 'football_next_goal_away_team_10');
-        });
-
-    $events
-        ->where('period_time', '=', 50)
-        ->each(function($event) use($source) {
-            prepareSignals1($event, $source, 'football_next_goal_away_team_50');
-        });
-
-    $events
-        ->where('period_time', '=', 60)
-        ->each(function($event) use($source) {
-            prepareSignals1($event, $source, 'football_next_goal_away_team_60');
-        });
-
-    $events
-        ->where('period_time', '=', 80)
-        ->each(function($event) use($source) {
-            prepareSignals1($event, $source, 'football_next_goal_away_team_80');
-        });
-
-    function prepareSignals1($event, $source, $code) {
-        $added_event = Event::findBySourceId($event->source->id, $source->id);
-            
-        if(!empty($added_event) && !$event->odds->isEmpty()) {
-            dump_event($event);
-
-            dump_signal(
-                $added_event, 
-                $event->odds->first(), 
-                $event->odds->first()->values->get(1),
-                $code
-            );
-
-            create_signal(
-                $added_event,
-                $event->odds->first(), 
-                $event->odds->first()->values->get(1),
-                $code
-            );
-        }            
+        $added_signal = Signal::create([
+            'sport_id' => 1,//$added_event->sport->id,
+            'event_id' => $added_event->id,
+            'flag' => 'test',
+            'code' => $code,
+            'odd_external_id' => $odd_value->source->id,
+            'odd_type' => $odd->name,
+            'odd_term' => $odd_value->term,
+            'odd_value' => $odd_value->value,
+        ]);
     }
 
     function dump_signal($added_event, $odd, $odd_value, $code) {

@@ -6,7 +6,9 @@
     use SportData\Clients\BetBoom\Betting;
     use SportData\Models\Events\Event;
     use SportData\Models\Betting\Signal;
+    use SportData\Models\Source;
 
+    $source = Source::where('name', 'BetBoom')->first();
     $eventsClient = new BetBoom;
     $betClient = new Betting;
 
@@ -34,8 +36,8 @@
 
     $events
     ->each(
-        function($event) use($betClient) {
-            $added_event = Event::findBySourceId($event->source->id, 1);
+        function($event) use($source, $betClient) {
+            $added_event = Event::findBySourceId($source->id, $event->source->id);
 
             if(!empty($added_event)) {
                 $odds = $event->odds->where('source.id', 1)->first();

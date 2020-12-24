@@ -27,7 +27,7 @@
         });
 
     function prepareSignals0($event, $source, $code) {
-        $added_event = Event::findBySourceId($event->source->id, $source->id);
+        $added_event = Event::findBySourceId($source->id, $event->source->id);
             
         if(!empty($added_event) && !$event->odds->isEmpty()) {
             dump_event($event);
@@ -49,7 +49,7 @@
     }
 
     function prepareSignals1($event, $source, $code) {
-        $added_event = Event::findBySourceId($event->source->id, $source->id);
+        $added_event = Event::findBySourceId($source->id, $event->source->id);
             
         if(!empty($added_event) && !$event->odds->isEmpty()) {
             dump_event($event);
@@ -71,7 +71,7 @@
     }
 
     function prepareSignals2($event, $source, $code) {
-        $added_event = Event::findBySourceId($event->source->id, $source->id);
+        $added_event = Event::findBySourceId($source->id, $event->source->id);
             
         if(!empty($added_event) && !$event->odds->isEmpty()) {
             dump_event($event);

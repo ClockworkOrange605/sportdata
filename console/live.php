@@ -20,7 +20,7 @@
     $events
         ->where('period_name', 'Finished')
         ->each(function($event) use($source) {
-        $added_event = Event::findBySourceId($event->source->id, $source->id);
+        $added_event = Event::findBySourceId($source->id, $event->source->id);
 
         if(!empty($added_event)) {
             $added_event->fill([

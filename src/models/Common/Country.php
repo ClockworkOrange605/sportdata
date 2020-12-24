@@ -5,6 +5,8 @@
 
     class Country extends Model
     {   
+        use \SportData\Models\Sourceable;
+
         protected $fillable = ['sport_id', 'name'];
         
         public $timestamps = false;
@@ -16,13 +18,6 @@
 
         public function leagues()
         {
-            return $this->hasMany('SportData\Models\Common\League');
-        }
-
-        public function sources()
-        {
-            return $this->morphToMany('SportData\Models\Source', 
-                'sources_pivot', null, 'entity_id', 'source_id'
-            )->withPivot('external_id');
+            return $this->hasMany(\SportData\Models\Common\League::class);
         }
     }

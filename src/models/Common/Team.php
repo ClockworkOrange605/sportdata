@@ -13,14 +13,4 @@
         {
             return $this->belongsTo(\SportData\Models\Common\League::class);
         }
-
-        // public function homeEvents()
-        // {
-        //     return $this->hasMany(\SportData\Models\Events\Event::class, 'home_team_id');
-        // }
-
-        // public function awayEvents()
-        // {
-        //     return $this->belongsTo(\SportData\Models\Events\Event::class, 'away_team_id');
-        // }
     }
