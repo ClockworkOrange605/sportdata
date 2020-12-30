@@ -8,11 +8,11 @@
         $table->foreignId('away_team_id')->constrained('teams');
         $table->string('name');
         $table->string('status');
+        $table->dateTime('date');
         $table->integer('home_score')->nullable();
-        $table->integer('away_score')->nullable();
-        $table->dateTime('start_at');
+        $table->integer('away_score')->nullable();        
 
-        $table->unique(['league_id', 'name', 'start_at']);
+        $table->unique(['league_id', 'name', 'date']);
     });
 
     // Capsule::schema()->create('odd_types', function ($table) {

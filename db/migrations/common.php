@@ -27,7 +27,7 @@
         $table->string('code')->nullable();
         $table->string('icon')->nullable();
 
-        $table->unique(['country_id', 'name']);
+        // $table->unique(['country_id', 'name']);
     });
 
     Capsule::schema()->create('teams', function ($table) {
