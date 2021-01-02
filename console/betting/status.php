@@ -3,35 +3,38 @@
 
     use Illuminate\Support\Carbon;
     use SportData\Clients\BetBoom\Betting;
+    use SportData\Clients\BetBoom\Events;
 
     $client = new Betting;
 
-    dump(
-        (string) Carbon::now(),
-        // (string) Carbon::now()->startOfDay(),
-        // (string) Carbon::now()->endOfDay(),
-    );
-
-    $orders = $client->getBets(
-        (string) Carbon::now()->startOfDay(),
+    $bets = $client->getBets(
+        (string) Carbon::yesterday()->startOfDay(),
         (string) Carbon::now()->endOfDay()
-        // "2020-12-15 00:00:00",
-        // "2020-12-15 23:59:59"
     );
 
-    $orders
+    $bets
         ->where('cancel_amount', '>', 0)
         ->each(function($order) use($client) {
-            $orderBet = $client->getBet($order->id);
+            if(!empty($order->cancel_amount)) {
+                $cancelAmount = $client->getBetCancelAmount($order->id);
 
-            dump(
-                $orderBet->OB[0]['PS'],
-                "{$order->id} ?? {$order->cancel_amount}"
-            );
+                dump(
+                    '🎫 '. $order->id . ' ' . $cancelAmount->cancel_amount . ' (' . $cancelAmount->cancel_odd . ') [' . $cancelAmount->bet_odd . ']'
+                );
+
+                // if(
+                //     $cancelAmount->cancel_odd > 1.6
+                // ) {
+                //     $cancelResponse = $client->cancelBet($order->id, $cancelAmount->cancel_amount);
+                //     dump(
+                //         '📟 '. $cancelResponse->status
+                //     );
+                // }
+            }
         });
 
     dump(
-        $orders->sum('bet_amount') .' -> '. $orders->sum('win_amount'),
+        $bets->sum('bet_amount') .' -> '. $bets->sum('win_amount'),
     );
 
     dd(

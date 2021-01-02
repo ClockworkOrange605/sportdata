@@ -135,7 +135,7 @@
         {
             $response = $this->client->post('Events/GetSportsWithCount');
 
-            $countries = array_map(function($item) { 
+            $sports = array_map(function($item) { 
                 return (object) [
                     'id' => $item['Id'],
                     'name' => $item['N'],
@@ -143,7 +143,7 @@
                 ];
             }, $response->json());
 
-            return collect($countries);
+            return collect($sports);
         }
 
         public function getCountriesWithPrematchEvents(int $sportId) : \Illuminate\Support\Collection
@@ -200,6 +200,21 @@
             return collect(
                 self::mapEventsWithOdds($response->json())
             );
+        }
+
+        public function getSportsWithLiveEvents() : \Illuminate\Support\Collection
+        {
+            $response = $this->client->get('Live/Sports');
+
+            $sports = array_map(function($item) { 
+                return (object) [
+                    'id' => $item['Id'],
+                    'name' => $item['N'],
+                    'events_count' => $item['EC'],
+                ];
+            }, $response->json());
+
+            return collect($sports);
         }
 
         public function getLiveEvents(int $sportId, array $oddTypes = [1,2,3]) : \Illuminate\Support\Collection

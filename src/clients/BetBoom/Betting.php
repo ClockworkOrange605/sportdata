@@ -58,13 +58,13 @@
                     "startDate" => $fromDate,
                     "endDate" => $untilDate,
 
-                    "statusFilter" => 1,
+                    "statusFilter" => 1, //<option value="1">Все ставки</option><option value="2">Выигрыш</option><option value="3">Проигрыш</option><option value="4">Не рассчитан</option></select>
                     "timeFilter" => 1,
                     "isDate" => true,
                     
                     "IsBetshopCash" => false,
                     "checkNumber" => "",
-                    "disableCache" => false
+                    "disableCache" => true
                 ]);
 
             $orders = array_map(function($order) {
@@ -94,6 +94,44 @@
             ]);
 
             return (object) $response->json();
+        }
+
+        public function getBetCancelAmount(string $betId)
+        {
+            $response = $this->client->post('Account/GetOrderAmountForCashout', [
+                "orderNumber" => $betId,
+                "isRfid" => false
+            ]);
+
+            $item = $response->json();
+
+            return (object) [
+                'status' => $item["ErrorMessage"],
+                'bet_odd' => $item["TotalOdds"],
+                'bet_amount' => $item["InitialOrderAmount"],
+                'cancel_odd' => $item["CashoutCoefficient"],
+                'cancel_amount' => $item["FullCashoutAmount"]
+            ];
+        }
+
+        public function cancelBet(string $betId, $amount)
+        {
+            $response = $this->client->post('Account/ConfirmCashout', [
+                "orderNumber" => $betId,
+                "cashoutAmount" => $amount,
+                "fullCashoutAmount" => $amount,
+                "agreeChanges" => false
+            ]);
+
+            $item = $response->json();
+
+            return (object) [
+                'success' => $item['CashoutSuccess'],
+                'status' => $item['Exception'],
+                'amount' => $item['OrderAmount'],
+                // '' => $item['TotalCashoutAmount'],
+                'original' => $item
+            ];
         }
 
     }

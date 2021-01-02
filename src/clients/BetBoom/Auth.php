@@ -28,7 +28,7 @@
 
             self::__construct();
 
-            return $response->json('status') == 'success' ? true : false;
+            return $response->json();
         }
 
         public function index() 
