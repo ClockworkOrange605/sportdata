@@ -7,11 +7,11 @@
     Capsule::schema()->dropIfExists('signals');
 
     /* events.php */
-    // Capsule::schema()->dropIfExists('odds');
-    // Capsule::schema()->dropIfExists('odd_types');
+    Capsule::schema()->dropIfExists('event_odds');
     Capsule::schema()->dropIfExists('events');
     
     /* common.php */
+    Capsule::schema()->dropIfExists('odds');
     Capsule::schema()->dropIfExists('teams');
     Capsule::schema()->dropIfExists('leagues');
     Capsule::schema()->dropIfExists('countries');

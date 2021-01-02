@@ -39,3 +39,8 @@
 
         $table->unique(['league_id', 'name']);
     });
+
+    Capsule::schema()->create('odds', function ($table) {
+        $table->id();
+        $table->string('name');
+    });

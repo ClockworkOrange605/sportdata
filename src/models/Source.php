@@ -30,9 +30,23 @@
             )->withPivot('external_id');
         }
 
+        public function odds()
+        {
+            return $this->morphedByMany('SportData\Models\Common\Odd', 
+                'sources_pivot', null, 'source_id', 'entity_id'
+            )->withPivot('external_id');
+        }
+
         public function events()
         {
             return $this->morphedByMany('SportData\Models\Events\Event', 
+                'sources_pivot', null, 'source_id', 'entity_id'
+            )->withPivot('external_id');
+        }
+
+        public function event_odds()
+        {
+            return $this->morphedByMany('SportData\Models\Events\EventOdd', 
                 'sources_pivot', null, 'source_id', 'entity_id'
             )->withPivot('external_id');
         }

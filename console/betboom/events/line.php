@@ -8,11 +8,13 @@
     use SportData\Models\Common\Country;
     use SportData\Models\Common\League;
     use SportData\Models\Common\Team;
+    use SportData\Models\Common\Odd;
     use SportData\Models\Events\Event;
+    use SportData\Models\Events\EventOdd;
 
     $source = Source::where('name', 'BetBoom')->first();
 
-    $client = new EventsClient('hour');
+    $client = new EventsClient('day');
 
     $sports = $client->getSportsWithPrematchEvents();
     $sports->each(function($sport) use($source, $client) {
@@ -27,10 +29,6 @@
                 $addedSport->id => ['external_id' => $sport->id]
             ]);
         }
-
-        dump(
-            $sport->id . ' ' . $sport->name . ' [' . $sport->events_count . ']',
-        );
 
         $countries = $client->getCountriesWithPrematchEvents($sport->id);
         $countries->each(function($country) use($source, $client, $addedSport) {
@@ -47,10 +45,6 @@
                 ]);
             }
 
-            dump(
-                $country->id . ' ' . $country->name . ' [' . $country->events_count . ']',
-            );
-
             $leagues = $client->getLeaguesWithPrematchEvents($country->id);
             $leagues->each(function($league) use($source, $client, $addedCountry) {
                 $addedLeague = League::findBySourceId($source->id, $league->id);
@@ -65,10 +59,6 @@
                         $addedLeague->id => ['external_id' => $league->id]
                     ]);
                 }
-
-                dump(
-                    $league->id . ' ' . $league->name . ' [' . $league->events_count . ']',
-                );
 
                 $events = $client->getPrematchEvents($league->id);
                 $events->each(function($event) use($source, $client, $addedLeague) {
@@ -95,15 +85,6 @@
                             ]);
                         }
 
-                        dump([
-                            'league_id' => $addedLeague->id,
-                            'home_team_id' => $homeTeam->id,
-                            'away_team_id' => $awayTeam->id,
-                            'status' => 'prematch',
-                            'name' => $event->name,
-                            'date' => $event->date                            
-                        ]);
-
                         $addedEvent = Event::create([
                             'league_id' => $addedLeague->id,
                             'home_team_id' => $homeTeam->id,
@@ -116,29 +97,40 @@
                         $source->events()->attach([
                             $addedEvent->id => ['external_id' => $event->id]
                         ]);
+
+                        $event->odds->each(function($odds) use($source, $client, $addedEvent) {
+                            $addedOdd = Odd::findBySourceId($source->id, $odds->id);
+
+                            if(empty($eventOdd)) {
+                                $addedOdd = Odd::create(['name' => $odds->name]);
+
+                                $source->odds()->attach([
+                                    $addedOdd->id => ['external_id' => $odds->id]
+                                ]);
+                            }
+    
+                            $odds->values->each(function($odd) use($source, $addedEvent, $addedOdd) {
+                                $eventOdd = EventOdd::findBySourceId($source->id, $odd->id);
+
+                                if(empty($eventOdd)) {
+                                    $eventOdd = EventOdd::create([
+                                        'type_id' => $addedOdd->id,
+                                        'event_id' => $addedEvent->id,
+                                        'type' => 'prematch',
+                                        'name' => $odd->name,
+                                        'value' => $odd->value,
+                                        'condition' => $odd->condition
+                                    ]);
+
+                                    $source->event_odds()->attach([
+                                        $eventOdd->id => ['external_id' => $odd->id]
+                                    ]);
+                                }    
+                            });
+                        });           
                     }
-
-                    dump(
-                        $event->id . ' ' . $event->livescores_id . ' ' . $event->name,
-                    );
-
-                    // $event->odds->each(function($odds) {
-
-                    //     dump(
-                    //         $odds->id . ' ' . $odds->name
-                    //     );
-
-                    //     $odds->values->each(function($odd) {
-
-                    //         dump(
-                    //             $odd->id . ' ' . $odd->name . ' ' . $odd->value . ' ' . $odd->condition
-                    //         );
-
-                    //     });
-                    // });
                 });
             });
         });
     });
-
     

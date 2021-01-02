@@ -15,17 +15,15 @@
         $table->unique(['league_id', 'name', 'date']);
     });
 
-    // Capsule::schema()->create('odd_types', function ($table) {
-    //     $table->id();
-    //     $table->string('name');
-    // });
-
-    // Capsule::schema()->create('odds', function ($table) {
-    //     $table->id();
-    //     $table->foreignId('type_id')->constrained('odd_types');
-    //     $table->foreignId('event_id')->constrained('events');
-    //     $table->string('name');
-    //     $table->float('value');
-    //     $table->float('condition')->nullable();
-    //     $table->boolean('is_winner')->nullable();
-    // });
+    Capsule::schema()->create('event_odds', function ($table) {
+        $table->id();
+        $table->foreignId('type_id')->constrained('odds');
+        $table->foreignId('event_id')->constrained('events');
+        $table->string('type');
+        $table->string('period_name')->nullable();
+        $table->string('period_time')->nullable();
+        $table->string('name');
+        $table->float('value');
+        $table->float('condition')->nullable();
+        // $table->boolean('is_win')->nullable();
+    });
