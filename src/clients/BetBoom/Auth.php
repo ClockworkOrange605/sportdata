@@ -47,6 +47,13 @@
             return $response->body();
         }
 
+        public function superlive()
+        {
+            $response = $this->client->get('https://betboom.ru/game/superlive');
+
+            return $response->body();
+        }
+
         public static function parseToken(string $page)
         {
             return (string) Str::of($page)
@@ -55,6 +62,17 @@
                 ->trim()
                 ->after("token: '")
                 ->before("',");
+        }
+
+        public static function parseSuperliveToken(string $page)
+        {
+            return (string) Str::of($page)
+                ->after("superlive-iframe")
+                ->before("</iframe>")
+                ->after("https://production.nbaplus.tk:9003/?auth=")
+                ->before("style")
+                ->trim()
+                ->before('"');
         }
         
     }
